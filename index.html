@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="meta_title">RideProfit - Portal dla Kierowców Uber & Bolt</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%2334D186'>🚗</text></svg>">
+    
+    <meta name="description" content="Kalkulator zarobków Uber i Bolt, porównanie kosztów eksploatacji samochodów oraz aktualne bonusy dla kierowców w Polsce. Maksymalizuj swój zysk!">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        /* DODANO PŁYNNE PRZEWIJANIE */
+        html { scroll-behavior: smooth; }
+        
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+        .card-gradient { background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); }
+        .uber-color { color: #000; background: #fff; }
+        .bolt-color { color: #fff; background: #34D186; }
+        .glow { box-shadow: 0 0 40px rgba(52, 209, 134, 0.3); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .dark-select option {
+            background-color: #1a1a2e !important; 
+            color: #ffffff !important; 
+        }
+        .dark-select {
+            color: #ffffff; 
+            background-color: #1a1a2e;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <nav class="fixed top-0 w-full z-50 bg-black/30 backdrop-blur-lg border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-car-side text-3xl text-green-400"></i>
+                <span class="text-2xl font-bold">Ride<span class="text-green-400">Profit</span></span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <div class="relative inline-block text-left">
+                    <select id="language-selector" class="dark-select bg-white/10 border border-white/20 rounded-full px-3 py-1 text-sm cursor-pointer" onchange="setLanguage(this.value)">
+                        <option value="pl">🇵🇱 PL</option>
+                        <option value="ru">🇷🇺 RU</option>
+                        <option value="ua">🇺🇦 UA</option>
+                    </select>
+                </div>
+                <div class="hidden md:flex gap-8">
+                    <a href="#kalkulator" class="hover:text-green-400 transition" data-lang-key="nav_calculator">Kalkulator</a>
+                    <a href="#auta" class="hover:text-green-400 transition" data-lang-key="nav_cars">Porównanie Aut</a>
+                    <a href="#bonusy" class="hover:text-green-400 transition" data-lang-key="nav_bonuses">Bonusy</a>
+                    <a href="#pierwsze-kroki" class="hover:text-green-400 transition" data-lang-key="nav_steps">Pierwsze Kroki</a>
+                    <a href="#regulamin" class="hover:text-green-400 transition" data-lang-key="nav_terms">Regulamin</a>
+                    <a href="#kontakt" class="bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded-full font-semibold text-sm transition text-black ml-4" data-lang-key="nav_contact_btn">Kontakt</a>
+                </div>
+                <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-black/90 px-4 py-4">
+            <a href="#kalkulator" class="block py-2 hover:text-green-400" data-lang-key="nav_calculator">Kalkulator</a>
+            <a href="#auta" class="block py-2 hover:text-green-400" data-lang-key="nav_cars">Porównanie Aut</a>
+            <a href="#bonusy" class="block py-2 hover:text-green-400" data-lang-key="nav_bonuses">Bonusy</a>
+            <a href="#pierwsze-kroki" class="block py-2 hover:text-green-400" data-lang-key="nav_steps">Pierwsze Kroki</a>
+            <a href="#regulamin" class="block py-2 hover:text-green-400" data-lang-key="nav_terms">Regulamin</a>
+            <a href="#kontakt" class="block py-2 bg-orange-500 hover:bg-orange-600 text-black rounded-lg text-center font-semibold mt-2" data-lang-key="nav_contact_btn">Kontakt</a>
+        </div>
+    </nav>
+    <section class="pt-32 pb-20 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6" data-lang-key="hero_h1">
+                Maksymalizuj <span class="text-green-400">Zarobki</span> jako Kierowca
+            </h1>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto" data-lang-key="hero_p">
+                Oblicz ile zarobisz w Uber i Bolt, znajdź najlepsze auto i odkryj sekrety top kierowców
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#kalkulator" class="bg-green-500 hover:bg-green-600 px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105" data-lang-key="hero_btn_calc">
+                    <i class="fas fa-calculator mr-2"></i>Oblicz Zarobki
+                </a>
+                <a href="#auta" class="border border-white/30 hover:bg-white/10 px-8 py-4 rounded-full font-semibold text-lg transition" data-lang-key="hero_btn_cars">
+                    <i class="fas fa-car mr-2"></i>Porównaj Auta
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+                <div class="card-gradient p-6 rounded-2xl border border-white/10">
+                    <div class="text-3xl font-bold text-green-400">15,000+</div>
+                    <div class="text-gray-400" data-lang-key="stats_drivers">Aktywnych Kierowców</div>
+                </div>
+                <div class="card-gradient p-6 rounded-2xl border border-white/10">
+                    <div class="text-3xl font-bold text-green-400">8,500 zł</div>
+                    <div class="text-gray-400" data-lang-key="stats_earning">Śr. Zarobek/Miesiąc</div>
+                </div>
+                <div class="card-gradient p-6 rounded-2xl border border-white/10">
+                    <div class="text-3xl font-bold text-green-400">12</div>
+                    <div class="text-gray-400" data-lang-key="stats_cities">Miast w Polsce</div>
+                </div>
+                <div class="card-gradient p-6 rounded-2xl border border-white/10">
+                    <div class="text-3xl font-bold text-green-400">24/7</div>
+                    <div class="text-gray-400" data-lang-key="stats_data">Aktualne Dane</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="kalkulator" class="py-20 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4" data-lang-key="calc_h2">
+                <i class="fas fa-calculator text-green-400 mr-3"></i>Kalkulator Zarobków
+            </h2>
+            <p class="text-gray-400 text-center mb-12" data-lang-key="calc_p">Oblicz ile możesz zarobić jako kierowca Uber/Bolt</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card-gradient p-8 rounded-3xl border border-white/10">
+                    <h3 class="text-xl font-semibold mb-6" data-lang-key="calc_input_h3">Wprowadź dane</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_city">Miasto</label>
+                            <select id="city" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-green-400">
+                                <option value="warszawa">Warszawa</option>
+                                <option value="krakow">Kraków</option>
+                                <option value="wroclaw">Wrocław</option>
+                                <option value="poznan">Poznań</option>
+                                <option value="gdansk">Gdańsk</option>
+                                <option value="lodz">Łódź</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_hours_per_day">Godziny pracy dziennie: <span id="hoursValue">8</span>h</label>
+                            <input type="range" id="hours" min="4" max="14" value="8" class="w-full accent-green-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_days_per_week">Dni w tygodniu: <span id="daysValue">5</span></label>
+                            <input type="range" id="days" min="1" max="7" value="5" class="w-full accent-green-400">
+                        </div>
+                         <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_commission">Prowizja Partnera/Platformy (%): <span id="commissionValue">25</span>%</label>
+                            <input type="range" id="commissionRate" min="0" max="30" value="25" class="w-full accent-green-400">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_fuel_cons">Spalanie auta (l/100km): <span id="fuelValue">7</span></label>
+                            <input type="range" id="fuel" min="4" max="15" value="7" step="0.5" class="w-full accent-green-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_fuel_price">Cena paliwa (zł/l) - Domyślnie LPG</label>
+                            <input type="number" id="fuelPrice" value="2.60" step="0.01" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-green-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-400 mb-2" data-lang-key="calc_platform">Platforma</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="uber" checked class="accent-green-400 w-5 h-5">
+                                    <span>Uber</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="bolt" checked class="accent-green-400 w-5 h-5">
+                                    <span>Bolt</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button onclick="calculateEarnings()" class="w-full bg-green-500 hover:bg-green-600 py-4 rounded-xl font-semibold text-lg transition" data-lang-key="calc_btn_calculate">
+                            Oblicz Zarobki
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-gradient p-8 rounded-3xl border border-white/10 glow">
+                    <h3 class="text-xl font-semibold mb-6" data-lang-key="calc_results_h3">Twoje potencjalne zarobki</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-green-500/20 p-6 rounded-2xl border border-green-500/30">
+                            <div class="text-gray-400 mb-1" data-lang-key="calc_daily_gross">Zarobek dzienny (brutto)</div>
+                            <div class="text-4xl font-bold text-green-400" id="dailyGross">480 zł</div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white/5 p-4 rounded-xl">
+                                <div class="text-gray-400 text-sm" data-lang-key="calc_weekly">Tygodniowo</div>
+                                <div class="text-2xl font-bold" id="weeklyGross">2,400 zł</div>
+                            </div>
+                            <div class="bg-white/5 p-4 rounded-xl">
+                                <div class="text-gray-400 text-sm" data-lang-key="calc_monthly">Miesięcznie</div>
+                                <div class="text-2xl font-bold" id="monthlyGross">9,600 zł</div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-white/10 pt-6">
+                            <h4 class="font-semibold mb-4 text-red-400" data-lang-key="calc_costs_h4"><i class="fas fa-minus-circle mr-2"></i>Koszty</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400" data-lang-key="cost_fuel_monthly">Paliwo (miesięcznie)</span>
+                                    <span id="fuelCost">-1,820 zł</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400" data-lang-key="cost_commission">Prowizja platform (<span id="commissionDisplay">25%</span>)</span>
+                                    <span id="commissionCost">-2,400 zł</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400" data-lang-key="cost_fixed">Koszty stałe</span>
+                                    <span id="otherCosts">-800 zł <span class="text-xs text-gray-500" data-lang-key="cost_fixed_details">(Partner, Podatki, Serwis)</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-green-500/30 to-blue-500/30 p-6 rounded-2xl">
+                            <div class="text-gray-300 mb-1" data-lang-key="calc_monthly_net">Zarobek netto (na rękę)</div>
+                            <div class="text-4xl font-bold text-white" id="monthlyNet">4,580 zł</div>
+                            <div class="text-sm text-gray-400 mt-2">~<span id="hourlyRate">28.63</span> zł/<span data-lang-key="calc_hourly_rate">godzinę netto</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="auta" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4" data-lang-key="cars_h2">
+                <i class="fas fa-car text-blue-400 mr-3"></i>Porównanie Aut
+            </h2>
+            <p class="text-gray-400 text-center mb-6" data-lang-key="cars_p">Które auto najbardziej się opłaca do Uber/Bolt?</p>
+
+            <div class="card-gradient p-6 rounded-3xl border border-white/10 mb-12 max-w-2xl mx-auto">
+                <h3 class="text-xl font-semibold mb-4 text-center text-blue-400" data-lang-key="cars_simulator_h3">Symulator Kosztów Paliwa</h3>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-gray-400 mb-2" data-lang-key="cars_monthly_dist">Miesięczny Dystans (km): <span id="monthlyKmValue">10,000</span> km</label>
+                        <input type="range" id="monthlyKmSlider" min="1000" max="15000" value="10000" step="100" class="w-full accent-blue-400" oninput="updateCarCosts()">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-2" data-lang-key="cars_driving_mode">Tryb Jazdy (wpływa na spalanie):</label>
+                        <select id="drivingMode" class="dark-select w-full border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-400" onchange="updateCarCosts()">
+                            <option value="standard" data-lang-key="mode_standard">Standard (Umiarkowany)</option>
+                            <option value="eco" data-lang-key="mode_eco">Ekonomiczny (-10% spalania)</option>
+                            <option value="fast" data-lang-key="mode_fast">Dynamiczny/Szybki (+10% spalania)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="car-comparison-container">
+                </div>
+            <p class="text-xs text-gray-500 mt-6 text-center" data-lang-key="cars_disclaimer">
+                *Kalkulacja kosztu paliwa jest teraz dynamiczna. Domyślne ceny paliw: LPG 2.60 zł/l, **Pb95 5.98 zł/l**, Diesel 6.20 zł/l. W przypadku Tesli koszt opiera się o szacunkowe ładowanie w domu (0.70 zł/kWh).
+            </p>
+        </div>
+    </section>
+
+    <section id="pierwsze-kroki" class="py-20 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4" data-lang-key="steps_h2">
+                <i class="fas fa-clipboard-list text-pink-400 mr-3"></i>Pierwsze Kroki
+            </h2>
+            <p class="text-gray-400 text-center mb-12" data-lang-key="steps_p">Lista kontrolna dla nowego kierowcy</p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-gradient p-6 rounded-3xl border border-white/10">
+                    <div class="text-4xl font-bold text-green-400 mb-3">1.</div>
+                    <h3 class="text-xl font-semibold mb-3" data-lang-key="step1_h3">Wybierz Partnera</h3>
+                    <p class="text-gray-400" data-lang-key="step1_p">Znajdź partnera flotowego oferującego najniższą prowizję (20-25%) i przejrzyste warunki rozliczenia. To klucz do legalnej jazdy.</p>
+                </div>
+                <div class="card-gradient p-6 rounded-3xl border border-white/10">
+                    <div class="text-4xl font-bold text-green-400 mb-3">2.</div>
+                    <h3 class="text-xl font-semibold mb-3" data-lang-key="step2_h3">Przygotuj Auto</h3>
+                    <p class="text-gray-400" data-lang-key="step2_p">Upewnij się, że Twój samochód spełnia wymagania (rocznik, stan techniczny). Rozważ instalację LPG lub wybór Hybrydy/EV, by zminimalizować koszty.</p>
+                </div>
+                <div class="card-gradient p-6 rounded-3xl border border-white/10">
+                    <div class="text-4xl font-bold text-green-400 mb-3">3.</div>
+                    <h3 class="text-xl font-semibold mb-3" data-lang-key="step3_h3">Zarejestruj Konto</h3>
+                    <p class="text-gray-400" data-lang-key="step3_p">Utwórz konta na platformach (Uber, Bolt) i prześlij wymagane dokumenty: prawo jazdy, zaświadczenie o niekaralności, badania lekarskie.</p>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-center mt-16 mb-8 text-blue-400" data-lang-key="faq_h3">Najczęstsze Pytania (FAQ)</h3>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <button class="w-full text-left flex justify-between items-center font-semibold text-lg" onclick="toggleFaq(this)">
+                        <span data-lang-key="faq1_q">Czy potrzebuję własnej działalności gospodarczej?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="hidden pt-3 text-gray-400" data-lang-key="faq1_a">
+                        Nie. Wystarczy, że podpiszesz umowę z Partnerem Flotowym. Partner przejmie całą księgowość, a Ty otrzymasz co tydzień przelew netto (na rękę), po potrąceniu prowizji i kosztów.
+                    </div>
+                </div>
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <button class="w-full text-left flex justify-between items-center font-semibold text-lg" onclick="toggleFaq(this)">
+                        <span data-lang-key="faq2_q">Jakie są największe koszty?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="hidden pt-3 text-gray-400" data-lang-key="faq2_a">
+                        Największym kosztem jest paliwo (około 20-30% brutto) oraz prowizja platformy i Partnera (około 25-30% brutto). Używanie LPG lub Hybrydy minimalizuje koszty paliwa.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="godziny" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4" data-lang-key="time_stats_h2">
+                <i class="fas fa-clock text-yellow-400 mr-3"></i>Statystyki Godzinowe
+            </h2>
+            <p class="text-gray-400 text-center mb-12" data-lang-key="time_stats_p">Kiedy zarobisz najwięcej? Porównanie godzin szczytu z normalnymi</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card-gradient p-8 rounded-3xl border border-white/10">
+                    <h3 class="text-xl font-semibold mb-6" data-lang-key="time_stats_profitability">Rentowność według godzin</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="w-20 text-gray-400">6:00-9:00</span>
+                            <div class="flex-1 bg-white/10 rounded-full h-8 overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full flex items-center justify-end pr-3" style="width: 90%">
+                                    <span class="text-sm font-bold">90%</span>
+                                </div>
+                            </div>
+                            <span class="text-green-400 font-bold">💰💰💰</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-20 text-gray-400">9:00-12:00</span>
+                            <div class="flex-1 bg-white/10 rounded-full h-8 overflow-hidden">
+                                <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 h-full rounded-full flex items-center justify-end pr-3" style="width: 50%">
+                                    <span class="text-sm font-bold">50%</span>
+                                </div>
+                            </div>
+                            <span class="text-yellow-400 font-bold">💰</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-20 text-gray-400">12:00-15:00</span>
+                            <div class="flex-1 bg-white/10 rounded-full h-8 overflow-hidden">
+                                <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 h-full rounded-full flex items-center justify-end pr-3" style="width: 60%">
+                                    <span class="text-sm font-bold">60%</span>
+                                </div>
+                            </div>
+                            <span class="text-yellow-400 font-bold">💰💰</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-20 text-gray-400">15:00-19:00</span>
+                            <div class="flex-1 bg-white/10 rounded-full h-8 overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full flex items-center justify-end pr-3" style="width: 95%">
+                                    <span class="text-sm font-bold">95%</span>
+                                </div>
+                            </div>
+                            <span class="text-green-400 font-bold">💰💰💰</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-20 text-gray-400">19:00-22:00</span>
+                            <div class="flex-1 bg-white/10 rounded-full h-8 overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full flex items-center justify-end pr-3" style="width: 85%">
+                                    <span class="text-sm font-bold">85%</span>
+                                </div>
+                            </div>
+                            <span class="text-green-400 font-bold">💰💰💰</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-20 text-gray-400">22:00-2:00</span>
+                            <div class="flex-1 bg-white/10 rounded-full h-8 overflow-hidden">
+                                <div class="bg-gradient-to-r from-purple-500 to-purple-400 h-full rounded-full flex items-center justify-end pr-3" style="width: 100%">
+                                    <span class="text-sm font-bold">100%</span>
+                                </div>
+                            </div>
+                            <span class="text-purple-400 font-bold">💰💰💰 🌙</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-gradient p-8 rounded-3xl border border-white/10">
+                    <h3 class="text-xl font-semibold mb-6" data-lang-key="time_stats_locations">Lokalizacje o wysokiej rentowności</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/5 p-4 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-plane text-green-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold" data-lang-key="loc_airport_h">Lotnisko</div>
+                                <div class="text-sm text-gray-400" data-lang-key="loc_airport_p">Długie, dobrze płatne kursy</div>
+                            </div>
+                            <span class="text-green-400 font-bold">+40%</span>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-train text-blue-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold" data-lang-key="loc_station_h">Dworzec Centralny</div>
+                                <div class="text-sm text-gray-400" data-lang-key="loc_station_p">Stały ruch, szczyt rano i wieczorem</div>
+                            </div>
+                            <span class="text-blue-400 font-bold">+25%</span>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-glass-cheers text-purple-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold" data-lang-key="loc_clubs_h">Centrum / Kluby</div>
+                                <div class="text-sm text-gray-400" data-lang-key="loc_clubs_p">Piątek-Sobota, 22:00-4:00</div>
+                            </div>
+                            <span class="text-purple-400 font-bold">+50%</span>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-xl flex items-center gap-4">
+                            <div class="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-building text-yellow-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold" data-lang-key="loc_offices_h">Dzielnice biurowe</div>
+                                <div class="text-sm text-gray-400" data-lang-key="loc_offices_p">Pon-Pt, 7:00-9:00 i 16:00-19:00</div>
+                            </div>
+                            <span class="text-yellow-400 font-bold">+30%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="bonusy" class="py-20 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4" data-lang-key="bonuses_h2">
+                <i class="fas fa-gift text-pink-400 mr-3"></i>Przykładowe Struktury Bonusów
+            </h2>
+            <p class="text-gray-400 text-center mb-6" data-lang-key="bonuses_p">Poniższe dane są <span class="text-yellow-400 font-bold">tylko ilustracją</span> typowych promocji. Sprawdź swoją aplikację!</p>
+            
+            <div class="max-w-3xl mx-auto bg-red-800/20 border-l-4 border-red-500 p-4 mb-10 rounded-xl">
+                <p class="font-semibold text-red-300" data-lang-key="bonus_warning_h">UWAGA:</p>
+                <p class="text-sm text-red-200" data-lang-key="bonus_warning_p">Rzeczywiste bonusy i "questy" są dynamiczne, zmieniają się co tydzień i są spersonalizowane dla każdego kierowcy. **Zawsze weryfikuj je w swojej aplikacji Uber Driver lub Bolt Driver.**</p>
+            </div>
+            
+            <div class="card-gradient p-6 rounded-3xl border border-white/10 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-center" data-lang-key="bonus_filter_h3">Filtruj przykładowe bonusy według miasta:</h3>
+                <div class="grid grid-cols-3 md:grid-cols-6 gap-4" id="city-filter-container">
+                    <div class="city-filter-chip bg-green-500 p-3 rounded-xl text-center hover:bg-green-400 transition cursor-pointer font-semibold text-black" data-city="Wszystkie" data-lang-key="city_all">Wszystkie</div>
+                    <div class="city-filter-chip bg-white/5 p-3 rounded-xl text-center hover:bg-white/10 transition cursor-pointer text-gray-300" data-city="Warszawa">Warszawa</div>
+                    <div class="city-filter-chip bg-white/5 p-3 rounded-xl text-center hover:bg-white/10 transition cursor-pointer text-gray-300" data-city="Kraków">Kraków</div>
+                    <div class="city-filter-chip bg-white/5 p-3 rounded-xl text-center hover:bg-white/10 transition cursor-pointer text-gray-300" data-city="Wrocław">Wrocław</div>
+                    <div class="city-filter-chip bg-white/5 p-3 rounded-xl text-center hover:bg-white/10 transition cursor-pointer text-gray-300" data-city="Poznań">Poznań</div>
+                    <div class="city-filter-chip bg-white/5 p-3 rounded-xl text-center hover:bg-white/10 transition cursor-pointer text-gray-300" data-city="Gdańsk">Gdańsk</div>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="bonus-list-container">
+                </div>
+        </div>
+    </section>
+    
+<section id="kontakt" class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-4" data-lang-key="contact_h2">
+            <i class="fas fa-envelope text-orange-400 mr-3"></i>Skontaktuj się z nami
+        </h2>
+        <p class="text-gray-400 text-center mb-12" data-lang-key="contact_p">Masz pytania dotyczące zarobków, auta lub partnera? Napisz!</p>
+        
+        <form action="https://formspree.io/f/mldyjlve" method="POST" class="max-w-xl mx-auto card-gradient p-8 rounded-3xl border border-white/10 space-y-6">
+            
+            <div>
+                <label for="name" class="block text-gray-400 mb-2" data-lang-key="contact_name_label">Twoje imię/Nazwa firmy</label>
+                <input type="text" id="name" name="Imię" data-lang-key="contact_name_placeholder" data-lang-attr="placeholder" placeholder="Jan Kowalski / Ride Sp. z o.o." class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-400" required>
+            </div>
+            <div>
+                <label for="email" class="block text-gray-400 mb-2" data-lang-key="contact_email_label">Adres e-mail</label>
+                <input type="email" id="email" name="_replyto" data-lang-key="contact_email_placeholder" data-lang-attr="placeholder" placeholder="kontakt@przyklad.pl" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-400" required>
+            </div>
+            <div>
+                <label for="subject" class="block text-gray-400 mb-2" data-lang-key="contact_subject_label">Temat</label>
+                <select id="subject" name="Temat" class="dark-select w-full border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-400">
+                    <option data-lang-key="subject_partner">Pytanie o Partnera Flotowego</option>
+                    <option data-lang-key="subject_costs">Prośba o analizę kosztów</option>
+                    <option data-lang-key="subject_error">Zgłoś błąd na stronie</option>
+                    <option data-lang-key="subject_other">Inny temat</option>
+                </select>
+            </div>
+            <div>
+                <label for="message" class="block text-gray-400 mb-2" data-lang-key="contact_message_label">Wiadomość</label>
+                <textarea id="message" name="Wiadomość" rows="4" data-lang-key="contact_message_placeholder" data-lang-attr="placeholder" placeholder="Opisz swoje zapytanie..." class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-orange-400" required></textarea>
+            </div>
+            <div class="flex items-start">
+                <input type="checkbox" id="consent" class="accent-orange-400 mt-1 mr-2" required>
+                <label for="consent" class="text-gray-400 text-sm" data-lang-key="contact_consent">
+                    Akceptuję <a href="#regulamin" class="text-orange-400 hover:underline">Regulamin</a> i Politykę Prywatności.
+                </label>
+            </div>
+            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 py-4 rounded-xl font-semibold text-lg transition text-black" data-lang-key="contact_btn_send">
+                Wyślij Zapytanie
+            </button>
+        </form>
+        
+        <div class="text-center mt-8">
+            <p class="text-gray-400" data-lang-key="contact_info_p">
+                Możesz również napisać bezpośrednio na: <a href="mailto:kontakt@rideprofit.pl" class="text-orange-400 hover:underline">kontakt@rideprofit.pl</a>
+            </p>
+        </div>
+    </div>
+</section>
+    <section id="regulamin" class="py-20 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8" data-lang-key="terms_h2">
+                <i class="fas fa-file-contract text-red-400 mr-3"></i>Regulamin i Polityka Prywatności
+            </h2>
+            <div class="card-gradient p-8 rounded-3xl border border-white/10 max-w-4xl mx-auto space-y-6">
+                <h3 class="text-xl font-semibold text-red-400" data-lang-key="terms_1_h3">1. Postanowienia Ogólne</h3>
+                <p class="text-gray-400" data-lang-key="terms_1_p">Portal RideProfit ma charakter informacyjny. Wszystkie dane dotyczące zarobków, kosztów i aut są szacunkowe i nie stanowią gwarancji zysku. Rzeczywiste wyniki mogą się różnić w zależności od miasta, godzin pracy, stylu jazdy i aktualnych stawek platform Uber/Bolt.</p>
+                
+                <h3 class="text-xl font-semibold text-red-400" data-lang-key="terms_2_h3">2. Pliki Cookies</h3>
+                <p class="text-gray-400" data-lang-key="terms_2_p">Korzystamy z plików cookies (ciasteczek) w celu poprawy funkcjonalności, analizy ruchu na stronie oraz w celach statystycznych. Kontynuując korzystanie z serwisu, wyrażasz zgodę na użycie cookies. Możesz zmienić ustawienia swojej przeglądarki, aby je zablokować, co może wpłynąć na niektóre funkcje serwisu.</p>
+
+                <h3 class="text-xl font-semibold text-red-400" data-lang-key="terms_3_h3">3. Odpowiedzialność</h3>
+                <p class="text-gray-400" data-lang-key="terms_3_p">RideProfit nie jest partnerem biznesowym ani przedstawicielem firm Uber, Bolt ani żadnego partnera flotowego. Wszelkie decyzje o współpracy z ww. firmami podejmujesz na własną odpowiedzialność, po zapoznaniu się z ich oficjalnymi regulaminami.</p>
+            </div>
+        </div>
+    </section>
+    <footer class="py-12 px-4 border-t border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-car-side text-2xl text-green-400"></i>
+                        <span class="text-xl font-bold">Ride<span class="text-green-400">Profit</span></span>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-lang-key="footer_description">Portal dla kierowców Uber i Bolt. Pomagamy maksymalizować zarobki i optymalizować koszty.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4" data-lang-key="footer_tools">Narzędzia</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#kalkulator" class="hover:text-green-400" data-lang-key="nav_calculator">Kalkulator zarobków</a></li>
+                        <li><a href="#auta" class="hover:text-green-400" data-lang-key="nav_cars">Porównanie aut</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4" data-lang-key="footer_info">Informacje</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#pierwsze-kroki" class="hover:text-green-400" data-lang-key="nav_steps">Pierwsze kroki</a></li>
+                        <li><a href="#bonusy" class="hover:text-green-400" data-lang-key="footer_bonuses">Przykładowe bonusy</a></li>
+                        <li><a href="#godziny" class="hover:text-green-400" data-lang-key="footer_time_stats">Statystyki godzinowe</a></li>
+                        <li><a href="#regulamin" class="hover:text-green-400" data-lang-key="footer_terms">Regulamin i Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4" data-lang-key="footer_contact">Kontakt</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-green-400">kontakt@rideprofit.pl</a></li>
+                        <li><a href="#kontakt" class="hover:text-green-400" data-lang-key="footer_contact_form">Formularz kontaktowy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
+                <p data-lang-key="footer_copyright">© 2025 RideProfit. Wszystkie prawa zastrzeżone. Dane mają charakter orientacyjny.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 p-4 bg-gray-800 text-white z-50 transition-transform transform translate-y-full opacity-0 duration-500 shadow-2xl border-t border-white/10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-sm" data-lang-key="cookie_p">
+                Używamy plików cookies w celu analizy ruchu, personalizacji treści i świadczenia usług. Dalsze korzystanie z naszej strony oznacza, że zgadzasz się na ich użycie.
+                <a href="#regulamin" class="text-green-400 underline ml-1 font-medium" data-lang-key="cookie_link">Dowiedz się więcej (Regulamin)</a>
+            </p>
+            <button id="accept-cookies" class="bg-green-500 hover:bg-green-600 px-6 py-2 rounded-full font-semibold text-sm transition flex-shrink-0 text-black" data-lang-key="cookie_btn">
+                Akceptuję
+            </button>
+        </div>
+    </div>
+    <script>
+        // --- TŁUMACZENIA ---
+        const translations = {
+            'pl': {
+                // Meta i Nawigacja
+                'meta_title': 'RideProfit - Portal dla Kierowców Uber & Bolt',
+                'nav_calculator': 'Kalkulator',
+                'nav_cars': 'Porównanie Aut',
+                'nav_bonuses': 'Bonusy',
+                'nav_steps': 'Pierwsze Kroki',
+                'nav_terms': 'Regulamin',
+                'nav_contact_btn': 'Kontakt',
+                
+                // Hero
+                'hero_h1': 'Maksymalizuj <span class="text-green-400">Zarobki</span> jako Kierowca',
+                'hero_p': 'Oblicz ile zarobisz w Uber i Bolt, znajdź najlepsze auto i odkryj sekrety top kierowców',
+                'hero_btn_calc': 'Oblicz Zarobki',
+                'hero_btn_cars': 'Porównaj Auta',
+                'stats_drivers': 'Aktywnych Kierowców',
+                'stats_earning': 'Śr. Zarobek/Miesiąc',
+                'stats_cities': 'Miast w Polsce',
+                'stats_data': 'Aktualne Dane',
+
+                // Kalkulator (Input)
+                'calc_h2': 'Kalkulator Zarobków',
+                'calc_p': 'Oblicz ile możesz zarobić jako kierowca Uber/Bolt',
+                'calc_input_h3': 'Wprowadź dane',
+                'calc_city': 'Miasto',
+                'calc_hours_per_day': 'Godziny pracy dziennie: <span id="hoursValue">8</span>h',
+                'calc_days_per_week': 'Dni w tygodniu: <span id="daysValue">5</span>',
+                'calc_commission': 'Prowizja Partnera/Platformy (%): <span id="commissionValue">25</span>%',
+                'calc_fuel_cons': 'Spalanie auta (l/100km): <span id="fuelValue">7</span>',
+                'calc_fuel_price': 'Cena paliwa (zł/l) - Domyślnie LPG',
+                'calc_platform': 'Platforma',
+                'calc_btn_calculate': 'Oblicz Zarobki',
+
+                // Kalkulator (Wyniki)
+                'calc_results_h3': 'Twoje potencjalne zarobki',
+                'calc_daily_gross': 'Zarobek dzienny (brutto)',
+                'calc_weekly': 'Tygodniowo',
+                'calc_monthly': 'Miesięcznie',
+                'calc_costs_h4': 'Koszty',
+                'cost_fuel_monthly': 'Paliwo (miesięcznie)',
+                'cost_commission': 'Prowizja platform (<span id="commissionDisplay">25%</span>)',
+                'cost_fixed': 'Koszty stałe',
+                'cost_fixed_details': '(Partner, Podatki, Serwis)',
+                'calc_monthly_net': 'Zarobek netto (na rękę)',
+                'calc_hourly_rate': 'godzinę netto',
+
+                // Porównanie aut
+                'cars_h2': 'Porównanie Aut',
+                'cars_p': 'Które auto najbardziej się opłaca do Uber/Bolt?',
+                'cars_simulator_h3': 'Symulator Kosztów Paliwa',
+                'cars_monthly_dist': 'Miesięczny Dystans (km): <span id="monthlyKmValue">10,000</span> km',
+                'cars_driving_mode': 'Tryb Jazdy (wpływa na spalanie):',
+                'mode_standard': 'Standard (Umiarkowany)',
+                'mode_eco': 'Ekonomiczny (-10% spalania)',
+                'mode_fast': 'Dynamiczny/Szybki (+10% spalania)',
+                'cars_disclaimer': '*Kalkulacja kosztu paliwa jest teraz dynamiczna. Domyślne ceny paliw: LPG 2.60 zł/l, **Pb95 5.98 zł/l**, Diesel 6.20 zł/l. W przypadku Tesli koszt opiera się o szacunkowe ładowanie w domu (0.70 zł/kWh).',
+                'car_fuel_consumption': 'Zużycie',
+                'car_price': 'Cena (używane)',
+                'car_cost_per_km': 'Koszt paliwa / <span class="km-display">10,000</span> km',
+                'car_profit': 'Szacowany zysk miesięczny (netto)',
+                'car_lpg_cons': 'Zużycie LPG',
+                'car_pb95_cons': 'Zużycie Pb95',
+                'car_lpg_cost': 'Koszt <span class="text-green-400">LPG</span> / <span class="km-display">10,000</span> km',
+                'car_pb95_cost': 'Koszt <span class="text-red-400">Pb95</span> / <span class="km-display">10,000</span> km',
+
+                // Pierwsze kroki
+                'steps_h2': 'Pierwsze Kroki',
+                'steps_p': 'Lista kontrolna dla nowego kierowcy',
+                'step1_h3': 'Wybierz Partnera',
+                'step1_p': 'Znajdź partnera flotowego oferującego najniższą prowizję (20-25%) i przejrzyste warunki rozliczenia. To klucz do legalnej jazdy.',
+                'step2_h3': 'Przygotuj Auto',
+                'step2_p': 'Upewnij się, że Twój samochód spełnia wymagania (rocznik, stan techniczny). Rozważ instalację LPG lub wybór Hybrydy/EV, by zminimalizować koszty.',
+                'step3_h3': 'Zarejestruj Konto',
+                'step3_p': 'Utwórz konta na platformach (Uber, Bolt) i prześlij wymagane dokumenty: prawo jazdy, zaświadczenie o niekaralności, badania lekarskie.',
+                
+                // FAQ
+                'faq_h3': 'Najczęstsze Pytania (FAQ)',
+                'faq1_q': 'Czy potrzebuję własnej działalności gospodarczej?',
+                'faq1_a': 'Nie. Wystarczy, że podpiszesz umowę z Partnerem Flotowym. Partner przejmie całą księgowość, a Ty otrzymasz co tydzień przelew netto (na rękę), po potrąceniu prowizji i kosztów.',
+                'faq2_q': 'Jakie są największe koszty?',
+                'faq2_a': 'Największym kosztem jest paliwo (około 20-30% brutto) oraz prowizja platformy i Partnera (około 25-30% brutto). Używanie LPG lub Hybrydy minimalizuje koszty paliwa.',
+                
+                // Statystyki godzinowe
+                'time_stats_h2': 'Statystyki Godzinowe',
+                'time_stats_p': 'Kiedy zarobisz najwięcej? Porównanie godzin szczytu z normalnymi',
+                'time_stats_profitability': 'Rentowność według godzin',
+                'time_stats_locations': 'Lokalizacje o wysokiej rentowności',
+                'loc_airport_h': 'Lotnisko',
+                'loc_airport_p': 'Długie, dobrze płatne kursy',
+                'loc_station_h': 'Dworzec Centralny',
+                'loc_station_p': 'Stały ruch, szczyt rano i wieczorem',
+                'loc_clubs_h': 'Centrum / Kluby',
+                'loc_clubs_p': 'Piątek-Sobota, 22:00-4:00',
+                'loc_offices_h': 'Dzielnice biurowe',
+                'loc_offices_p': 'Pon-Pt, 7:00-9:00 i 16:00-19:00',
+                
+                // Bonusy
+                'bonuses_h2': 'Przykładowe Struktury Bonusów',
+                'bonuses_p': 'Poniższe dane są <span class="text-yellow-400 font-bold">tylko ilustracją</span> typowych promocji. Sprawdź swoją aplikację!',
+                'bonus_warning_h': 'UWAGA:',
+                'bonus_warning_p': 'Rzeczywiste bonusy i "questy" są dynamiczne, zmieniają się co tydzień i są spersonalizowane dla każdego kierowcy. **Zawsze weryfikuj je w swojej aplikacji Uber Driver lub Bolt Driver.**',
+                'bonus_filter_h3': 'Filtruj przykładowe bonusy według miasta:',
+                'city_all': 'Wszystkie',
+
+                // Kontakt
+                'contact_h2': 'Skontaktuj się z nami',
+                'contact_p': 'Masz pytania dotyczące zarobków, auta lub partnera? Napisz!',
+                'contact_name_label': 'Twoje imię/Nazwa firmy',
+                'contact_name_placeholder': 'Jan Kowalski / Ride Sp. z o.o.',
+                'contact_email_label': 'Adres e-mail',
+                'contact_email_placeholder': 'kontakt@przyklad.pl',
+                'contact_subject_label': 'Temat',
+                'subject_partner': 'Pytanie o Partnera Flotowego',
+                'subject_costs': 'Prośba o analizę kosztów',
+                'subject_error': 'Zgłoś błąd na stronie',
+                'subject_other': 'Inny temat',
+                'contact_message_label': 'Wiadomość',
+                'contact_message_placeholder': 'Opisz swoje zapytanie...',
+                'contact_consent': 'Akceptuję <a href="#regulamin" class="text-orange-400 hover:underline">Regulamin</a> i Politykę Prywatności.',
+                'contact_btn_send': 'Wyślij Zapytanie',
+                
+                // Regulamin
+                'terms_h2': 'Regulamin i Polityka Prywatności',
+                'terms_1_h3': '1. Postanowienia Ogólne',
+                'terms_1_p': 'Portal RideProfit ma charakter informacyjny. Wszystkie dane dotyczące zarobków, kosztów i aut są szacunkowe i nie stanowią gwarancji zysku. Rzeczywiste wyniki mogą się różnić w zależności od miasta, godzin pracy, stylu jazdy i aktualnych stawek platform Uber/Bolt.',
+                'terms_2_h3': '2. Pliki Cookies',
+                'terms_2_p': 'Korzystamy z plików cookies (ciasteczek) w celu poprawy funkcjonalności, analizy ruchu na stronie oraz w celach statystycznych. Kontynuując korzystanie z serwisu, wyrażasz zgodę na użycie cookies. Możesz zmienić ustawienia swojej przeglądarki, aby je zablokować, co może wpłynąć na niektóre funkcje serwisu.',
+                'terms_3_h3': '3. Odpowiedzialność',
+                'terms_3_p': 'RideProfit nie jest partnerem biznesowym ani przedstawicielem firm Uber, Bolt ani żadnego partnera flotowego. Wszelkie decyzje o współpracy z ww. firmami podejmujesz na własną odpowiedzialność, po zapoznaniu się z ich oficjalnymi regulaminami.',
+
+                // Footer
+                'footer_description': 'Portal dla kierowców Uber i Bolt. Pomagamy maksymalizować zarobki i optymalizować koszty.',
+                'footer_tools': 'Narzędzia',
+                'footer_info': 'Informacje',
+                'footer_bonuses': 'Przykładowe bonusy',
+                'footer_time_stats': 'Statystyki godzinowe',
+                'footer_terms': 'Regulamin i Cookies',
+                'footer_contact': 'Kontakt',
+                'footer_contact_form': 'Formularz kontaktowy',
+                'footer_copyright': '© 2025 RideProfit. Wszystkie prawa zastrzeżone. Dane mają charakter orientacyjny.',
+
+                // Cookie Banner
+                'cookie_p': 'Używamy plików cookies w celu analizy ruchu, personalizacji treści i świadczenia usług. Dalsze korzystanie z naszej strony oznacza, że zgadzasz się na ich użycie.',
+                'cookie_link': 'Dowiedz się więcej (Regulamin)',
+                'cookie_btn': 'Akceptuję',
+            },
+            'ru': {
+                // Meta i Nawigacja
+                'meta_title': 'RideProfit - Портал для Водителей Uber & Bolt',
+                'nav_calculator': 'Калькулятор',
+                'nav_cars': 'Сравнение Авто',
+                'nav_bonuses': 'Бонусы',
+                'nav_steps': 'Первые Шаги',
+                'nav_terms': 'Условия',
+                'nav_contact_btn': 'Контакты',
+                
+                // Hero
+                'hero_h1': 'Максимизируйте <span class="text-green-400">Заработок</span> как Водитель',
+                'hero_p': 'Рассчитайте свой доход в Uber и Bolt, найдите лучший автомобиль и узнайте секреты топ-водителей',
+                'hero_btn_calc': 'Рассчитать Заработок',
+                'hero_btn_cars': 'Сравнить Авто',
+                'stats_drivers': 'Активных Водителей',
+                'stats_earning': 'Ср. Заработок/Месяц',
+                'stats_cities': 'Городов в Польше',
+                'stats_data': 'Актуальные Данные',
+
+                // Kalkulator (Input)
+                'calc_h2': 'Калькулятор Заработка',
+                'calc_p': 'Рассчитайте, сколько вы можете заработать как водитель Uber/Bolt',
+                'calc_input_h3': 'Введите данные',
+                'calc_city': 'Город',
+                'calc_hours_per_day': 'Рабочих часов в день: <span id="hoursValue">8</span>ч',
+                'calc_days_per_week': 'Дней в неделю: <span id="daysValue">5</span>',
+                'calc_commission': 'Комиссия Партнера/Платформы (%): <span id="commissionValue">25</span>%',
+                'calc_fuel_cons': 'Расход топлива (л/100км): <span id="fuelValue">7</span>',
+                'calc_fuel_price': 'Цена топлива (злотых/л) - По умолчанию LPG',
+                'calc_platform': 'Платформа',
+                'calc_btn_calculate': 'Рассчитать Заработок',
+
+                // Kalkulator (Wyniki)
+                'calc_results_h3': 'Ваш потенциальный заработок',
+                'calc_daily_gross': 'Дневной заработок (брутто)',
+                'calc_weekly': 'Еженедельно',
+                'calc_monthly': 'Ежемесячно',
+                'calc_costs_h4': 'Расходы',
+                'cost_fuel_monthly': 'Топливо (ежемесячно)',
+                'cost_commission': 'Комиссия платформ (<span id="commissionDisplay">25%</span>)',
+                'cost_fixed': 'Постоянные расходы',
+                'cost_fixed_details': '(Партнер, Налоги, Обслуживание)',
+                'calc_monthly_net': 'Чистый заработок (на руки)',
+                'calc_hourly_rate': 'злотых/час нетто',
+                
+                // Porównanie aut
+                'cars_h2': 'Сравнение Автомобилей',
+                'cars_p': 'Какой автомобиль наиболее выгоден для Uber/Bolt?',
+                'cars_simulator_h3': 'Симулятор Расходов на Топливо',
+                'cars_monthly_dist': 'Месячный Пробег (км): <span id="monthlyKmValue">10,000</span> км',
+                'cars_driving_mode': 'Режим Вождения (влияет на расход):',
+                'mode_standard': 'Стандартный (Умеренный)',
+                'mode_eco': 'Экономичный (-10% расхода)',
+                'mode_fast': 'Динамичный/Быстрый (+10% расхода)',
+                'cars_disclaimer': '*Расчет стоимости топлива динамический. Цены по умолчанию: LPG 2.60 zł/л, **Pb95 5.98 zł/л**, Diesel 6.20 zł/л. Для Tesla стоимость основана на примерной домашней зарядке (0.70 zł/кВтч).',
+                'car_fuel_consumption': 'Расход',
+                'car_price': 'Цена (б/у)',
+                'car_cost_per_km': 'Стоимость топлива / <span class="km-display">10,000</span> км',
+                'car_profit': 'Примерный ежемесячный доход (нетто)',
+                'car_lpg_cons': 'Расход LPG',
+                'car_pb95_cons': 'Расход Pb95',
+                'car_lpg_cost': 'Стоимость <span class="text-green-400">LPG</span> / <span class="km-display">10,000</span> км',
+                'car_pb95_cost': 'Стоимость <span class="text-red-400">Pb95</span> / <span class="km-display">10,000</span> км',
+
+                // Pierwsze kroki
+                'steps_h2': 'Первые Шаги',
+                'steps_p': 'Контрольный список для нового водителя',
+                'step1_h3': 'Выберите Партнера',
+                'step1_p': 'Найдите партнера автопарка, предлагающего самую низкую комиссию (20-25%) и прозрачные условия расчетов. Это ключ к легальной работе.',
+                'step2_h3': 'Подготовьте Автомобиль',
+                'step2_p': 'Убедитесь, что ваш автомобиль соответствует требованиям (год выпуска, техническое состояние). Рассмотрите установку ГБО (LPG) или выбор Гибрида/EV для минимизации расходов.',
+                'step3_h3': 'Зарегистрируйте Аккаунт',
+                'step3_p': 'Создайте аккаунты на платформах (Uber, Bolt) и загрузите необходимые документы: водительское удостоверение, справку о несудимости, медицинские справки.',
+
+                // FAQ
+                'faq_h3': 'Часто Задаваемые Вопросы (FAQ)',
+                'faq1_q': 'Нужно ли мне иметь собственную предпринимательскую деятельность?',
+                'faq1_a': 'Нет. Достаточно заключить договор с Партнером Автопарка. Партнер берет на себя всю бухгалтерию, а вы еженедельно получаете чистый перевод (на руки) после вычета комиссии и расходов.',
+                'faq2_q': 'Каковы самые большие расходы?',
+                'faq2_a': 'Самые большие расходы - это топливо (около 20-30% брутто) и комиссия платформы и Партнера (около 25-30% брутто). Использование ГБО (LPG) или Гибрида минимизирует расходы на топливо.',
+
+                // Statystyki godzinowe
+                'time_stats_h2': 'Почасовая Статистика',
+                'time_stats_p': 'Когда вы заработаете больше всего? Сравнение пиковых и обычных часов',
+                'time_stats_profitability': 'Рентабельность по часам',
+                'time_stats_locations': 'Места с высокой рентабельностью',
+                'loc_airport_h': 'Аэропорт',
+                'loc_airport_p': 'Длинные, хорошо оплачиваемые поездки',
+                'loc_station_h': 'Центральный Вокзал',
+                'loc_station_p': 'Постоянный трафик, пик утром и вечером',
+                'loc_clubs_h': 'Центр / Клубы',
+                'loc_clubs_p': 'Пятница-Суббота, 22:00-4:00',
+                'loc_offices_h': 'Офисные Районы',
+                'loc_offices_p': 'Пон-Пт, 7:00-9:00 и 16:00-19:00',
+
+                // Bonusy
+                'bonuses_h2': 'Примеры Структур Бонусов',
+                'bonuses_p': 'Данные ниже являются <span class="text-yellow-400 font-bold">только иллюстрацией</span> типичных акций. Проверьте свое приложение!',
+                'bonus_warning_h': 'ВНИМАНИЕ:',
+                'bonus_warning_p': 'Фактические бонусы и "квесты" динамичны, меняются каждую неделю и персонализированы для каждого водителя. **Всегда проверяйте их в своем приложении Uber Driver или Bolt Driver.**',
+                'bonus_filter_h3': 'Фильтр примеров бонусов по городу:',
+                'city_all': 'Все',
+
+                // Kontakt
+                'contact_h2': 'Свяжитесь с нами',
+                'contact_p': 'У вас есть вопросы о заработке, автомобиле или партнере? Напишите!',
+                'contact_name_label': 'Ваше имя/Название компании',
+                'contact_name_placeholder': 'Иван Иванов / Ride Sp. z o.o.',
+                'contact_email_label': 'Адрес электронной почты',
+                'contact_email_placeholder': 'kontakt@example.com',
+                'contact_subject_label': 'Тема',
+                'subject_partner': 'Вопрос о Партнере Автопарка',
+                'subject_costs': 'Запрос на анализ расходов',
+                'subject_error': 'Сообщить об ошибке на сайте',
+                'subject_other': 'Другая тема',
+                'contact_message_label': 'Сообщение',
+                'contact_message_placeholder': 'Опишите ваш запрос...',
+                'contact_consent': 'Я принимаю <a href="#regulamin" class="text-orange-400 hover:underline">Условия</a> и Политику Конфиденциальности.',
+                'contact_btn_send': 'Отправить Запрос',
+                
+                // Regulamin
+                'terms_h2': 'Условия и Политика Конфиденциальности',
+                'terms_1_h3': '1. Общие Положения',
+                'terms_1_p': 'Портал RideProfit носит информационный характер. Все данные о заработке, расходах и автомобилях являются оценочными и не гарантируют прибыль. Фактические результаты могут отличаться в зависимости от города, рабочего времени, стиля вождения и текущих тарифов платформ Uber/Bolt.',
+                'terms_2_h3': '2. Файлы Cookie',
+                'terms_2_p': 'Мы используем файлы cookie для улучшения функциональности, анализа трафика на сайте и в статистических целях. Продолжая пользоваться сайтом, вы соглашаетесь на использование файлов cookie. Вы можете изменить настройки своего браузера, чтобы заблокировать их, что может повлиять на некоторые функции сервиса.',
+                'terms_3_h3': '3. Ответственность',
+                'terms_3_p': 'RideProfit не является бизнес-партнером или представителем Uber, Bolt или любого партнера автопарка. Все решения о сотрудничестве с указанными компаниями вы принимаете под свою ответственность, ознакомившись с их официальными правилами.',
+
+                // Footer
+                'footer_description': 'Портал для водителей Uber и Bolt. Помогаем максимизировать заработок и оптимизировать расходы.',
+                'footer_tools': 'Инструменты',
+                'footer_info': 'Информация',
+                'footer_bonuses': 'Примеры бонусов',
+                'footer_time_stats': 'Почасовая статистика',
+                'footer_terms': 'Условия и Cookie',
+                'footer_contact': 'Контакты',
+                'footer_contact_form': 'Контактная форма',
+                'footer_copyright': '© 2025 RideProfit. Все права защищены. Данные носят ориентировочный характер.',
+
+                // Cookie Banner
+                'cookie_p': 'Мы используем файлы cookie для анализа трафика, персонализации контента и предоставления услуг. Продолжая пользоваться нашим сайтом, вы соглашаетесь на их использование.',
+                'cookie_link': 'Узнать больше (Условия)',
+                'cookie_btn': 'Принимаю',
+            },
+            'ua': {
+                // Meta i Nawigacja
+                'meta_title': 'RideProfit - Портал для Водіїв Uber & Bolt',
+                'nav_calculator': 'Калькулятор',
+                'nav_cars': 'Порівняння Авто',
+                'nav_bonuses': 'Бонуси',
+                'nav_steps': 'Перші Кроки',
+                'nav_terms': 'Правила',
+                'nav_contact_btn': 'Контакти',
+                
+                // Hero
+                'hero_h1': 'Максимізуйте <span class="text-green-400">Заробіток</span> як Водій',
+                'hero_p': 'Розрахуйте, скільки ви заробите в Uber та Bolt, знайдіть найкраще авто та відкрийте секрети топ-водіїв',
+                'hero_btn_calc': 'Розрахувати Заробіток',
+                'hero_btn_cars': 'Порівняти Авто',
+                'stats_drivers': 'Активних Водіїв',
+                'stats_earning': 'Сер. Заробіток/Місяць',
+                'stats_cities': 'Міст у Польщі',
+                'stats_data': 'Актуальні Дані',
+
+                // Kalkulator (Input)
+                'calc_h2': 'Калькулятор Заробітку',
+                'calc_p': 'Розрахуйте, скільки ви можете заробити як водій Uber/Bolt',
+                'calc_input_h3': 'Введіть дані',
+                'calc_city': 'Місто',
+                'calc_hours_per_day': 'Годин праці на день: <span id="hoursValue">8</span>год',
+                'calc_days_per_week': 'Днів на тиждень: <span id="daysValue">5</span>',
+                'calc_commission': 'Комісія Партнера/Платформи (%): <span id="commissionValue">25</span>%',
+                'calc_fuel_cons': 'Витрата палива (л/100км): <span id="fuelValue">7</span>',
+                'calc_fuel_price': 'Ціна палива (злотих/л) - За замовчуванням LPG',
+                'calc_platform': 'Платформа',
+                'calc_btn_calculate': 'Розрахувати Заробіток',
+
+                // Kalkulator (Wyniki)
+                'calc_results_h3': 'Ваш потенційний заробіток',
+                'calc_daily_gross': 'Денний заробіток (брутто)',
+                'calc_weekly': 'Щотижня',
+                'calc_monthly': 'Щомісяця',
+                'calc_costs_h4': 'Витрати',
+                'cost_fuel_monthly': 'Паливо (щомісячно)',
+                'cost_commission': 'Комісія платформ (<span id="commissionDisplay">25%</span>)',
+                'cost_fixed': 'Постійні витрати',
+                'cost_fixed_details': '(Партнер, Податки, Сервіс)',
+                'calc_monthly_net': 'Чистий заробіток (на руки)',
+                'calc_hourly_rate': 'злотих/годину нетто',
+
+                // Porównanie aut
+                'cars_h2': 'Порівняння Автомобілів',
+                'cars_p': 'Яке авто найвигідніше для Uber/Bolt?',
+                'cars_simulator_h3': 'Симулятор Витрат на Паливо',
+                'cars_monthly_dist': 'Місячна Дистанція (км): <span id="monthlyKmValue">10,000</span> км',
+                'cars_driving_mode': 'Режим Водіння (впливає на витрату):',
+                'mode_standard': 'Стандартний (Помірний)',
+                'mode_eco': 'Економічний (-10% витрати)',
+                'mode_fast': 'Динамічний/Швидкий (+10% витрати)',
+                'cars_disclaimer': '*Розрахунок вартості палива динамічний. Ціни за замовчуванням: LPG 2.60 zł/л, **Pb95 5.98 zł/л**, Diesel 6.20 zł/л. Для Tesla вартість базується на орієнтовній домашній зарядці (0.70 zł/кВтг).',
+                'car_fuel_consumption': 'Витрата',
+                'car_price': 'Ціна (вживане)',
+                'car_cost_per_km': 'Вартість палива / <span class="km-display">10,000</span> км',
+                'car_profit': 'Орієнтовний щомісячний прибуток (нетто)',
+                'car_lpg_cons': 'Витрата LPG',
+                'car_pb95_cons': 'Витрата Pb95',
+                'car_lpg_cost': 'Вартість <span class="text-green-400">LPG</span> / <span class="km-display">10,000</span> км',
+                'car_pb95_cost': 'Вартість <span class="text-red-400">Pb95</span> / <span class="km-display">10,000</span> км',
+                
+                // Перші кроки
+                'steps_h2': 'Перші Кроки',
+                'steps_p': 'Контрольний список для нового водія',
+                'step1_h3': 'Оберіть Партнера',
+                'step1_p': 'Знайдіть партнера автопарку, який пропонує найнижчу комісію (20-25%) та прозорі умови розрахунку. Це ключ до легальної роботи.',
+                'step2_h3': 'Підготуйте Авто',
+                'step2_p': 'Переконайтеся, що ваш автомобіль відповідає вимогам (рік випуску, технічний стан). Розгляньте встановлення LPG або вибір Гібриду/EV для мінімізації витрат.',
+                'step3_h3': 'Зареєструйте Акаунт',
+                'step3_p': 'Створіть акаунти на платформах (Uber, Bolt) і завантажте необхідні документи: посвідчення водія, довідку про несудимість, медичні довідки.',
+
+                // FAQ
+                'faq_h3': 'Найпоширеніші Запитання (FAQ)',
+                'faq1_q': 'Чи потрібна мені власна підприємницька діяльність?',
+                'faq1_a': 'Ні. Достатньо підписати договір з Партнером Автопарку. Партнер візьме на себе всю бухгалтерію, а ви щотижня отримуватимете чистий переказ (на руки) після вирахування комісії та витрат.',
+                'faq2_q': 'Які найбільші витрати?',
+                'faq2_a': 'Найбільші витрати – це паливо (близько 20-30% брутто) та комісія платформи і Партнера (близько 25-30% брутто). Використання LPG або Гібриду мінімізує витрати на паливо.',
+
+                // Statystyki godzinowe
+                'time_stats_h2': 'Погодинна Статистика',
+                'time_stats_p': 'Коли ви заробите найбільше? Порівняння пікових та звичайних годин',
+                'time_stats_profitability': 'Рентабельність за годинами',
+                'time_stats_locations': 'Місця з високою рентабельністю',
+                'loc_airport_h': 'Аеропорт',
+                'loc_airport_p': 'Довгі, добре оплачувані поїздки',
+                'loc_station_h': 'Центральний Вокзал',
+                'loc_station_p': 'Постійний рух, пік вранці та ввечері',
+                'loc_clubs_h': 'Центр / Клуби',
+                'loc_clubs_p': 'П\'ятниця-Субота, 22:00-4:00',
+                'loc_offices_h': 'Офісні Райони',
+                'loc_offices_p': 'Пон-Пт, 7:00-9:00 та 16:00-19:00',
+
+                // Bonusy
+                'bonuses_h2': 'Приклади Структур Бонусів',
+                'bonuses_p': 'Дані нижче є <span class="text-yellow-400 font-bold">лише ілюстрацією</span> типових акцій. Перевірте свій додаток!',
+                'bonus_warning_h': 'УВАГА:',
+                'bonus_warning_p': 'Фактичні бонуси та "квести" динамічні, змінюються щотижня і персоналізовані для кожного водія. **Завжди перевіряйте їх у своєму додатку Uber Driver або Bolt Driver.**',
+                'bonus_filter_h3': 'Фільтрувати приклади бонусів за містом:',
+                'city_all': 'Всі',
+
+                // Kontakt
+                'contact_h2': 'Зв\'яжіться з нами',
+                'contact_p': 'Маєте питання щодо заробітку, автомобіля чи партнера? Напишіть!',
+                'contact_name_label': 'Ваше ім\'я/Назва компанії',
+                'contact_name_placeholder': 'Іван Ковальський / Ride Sp. z o.o.',
+                'contact_email_label': 'Адреса електронної пошти',
+                'contact_email_placeholder': 'kontakt@example.pl',
+                'contact_subject_label': 'Тема',
+                'subject_partner': 'Питання про Партнера Автопарку',
+                'subject_costs': 'Прохання про аналіз витрат',
+                'subject_error': 'Повідомити про помилку на сайті',
+                'subject_other': 'Інша тема',
+                'contact_message_label': 'Повідомлення',
+                'contact_message_placeholder': 'Опишіть свій запит...',
+                'contact_consent': 'Я приймаю <a href="#regulamin" class="text-orange-400 hover:underline">Правила</a> та Політику Конфіденційності.',
+                'contact_btn_send': 'Надіслати Запит',
+                
+                // Regulamin
+                'terms_h2': 'Правила та Політика Конфіденційності',
+                'terms_1_h3': '1. Загальні Положення',
+                'terms_1_p': 'Портал RideProfit має інформаційний характер. Всі дані про заробіток, витрати та автомобілі є орієнтовними і не гарантують прибутку. Фактичні результати можуть відрізнятися залежно від міста, робочого часу, стилю водіння та поточних тарифів платформ Uber/Bolt.',
+                'terms_2_h3': '2. Файли Cookie',
+                'terms_2_p': 'Ми використовуємо файли cookie для покращення функціональності, аналізу трафіку на сайті та в статистичних цілях. Продовжуючи користуватися сервісом, ви погоджуєтеся на використання файлів cookie. Ви можете змінити налаштування свого браузера, щоб заблокувати їх, що може вплинути на деякі функції сервісу.',
+                'terms_3_h3': '3. Відповідальність',
+                'terms_3_p': 'RideProfit не є бізнес-партнером або представником Uber, Bolt чи будь-якого партнера автопарку. Усі рішення про співпрацю з вищезазначеними компаніями ви приймаєте під власну відповідальність, ознайомившись з їхніми офіційними правилами.',
+
+                // Footer
+                'footer_description': 'Портал для водіїв Uber та Bolt. Допомагаємо максимізувати заробіток та оптимізувати витрати.',
+                'footer_tools': 'Інструменти',
+                'footer_info': 'Інформація',
+                'footer_bonuses': 'Приклади бонусів',
+                'footer_time_stats': 'Погодинна статистика',
+                'footer_terms': 'Правила та Cookie',
+                'footer_contact': 'Контакти',
+                'footer_contact_form': 'Контактна форма',
+                'footer_copyright': '© 2025 RideProfit. Всі права захищені. Дані мають орієнтовний характер.',
+
+                // Cookie Banner
+                'cookie_p': 'Ми використовуємо файли cookie для аналізу трафіку, персоналізації контенту та надання послуг. Продовжуючи користуватися нашим сайтом, ви погоджуєтеся на їх використання.',
+                'cookie_link': 'Дізнатися більше (Правила)',
+                'cookie_btn': 'Приймаю',
+            }
+        };
+
+
+        // GLOBAL DATA & CONSTANTS
+        const cityRates = {
+            warszawa: 48, 
+            krakow: 45,
+            wroclaw: 44,
+            poznan: 42,
+            gdansk: 45,
+            lodz: 40
+        };
+
+        const FUEL_PRICES = {
+            LPG: 2.60,
+            Pb95: 5.98,
+            Diesel: 6.20, 
+            Electric: 0.70 
+        };
+
+        const carData = [
+            // Dodano car_tag dla dynamicznego tłumaczenia tagów
+            { id: 1, elementId: "c1", fuelType: "LPG", baseConsumption: 5.5, baseConsumptionPetrol: 5.0, label: " l/100km", isElectric: false, isBiFuel: true, name: "Toyota Corolla Hybrid LPG", years: "2020-2022", priceRange: "65,000 - 85,000 zł", profit: "+4,800 - 5,500 zł netto", tag: "TOP EKONOMIA / LPG", color: "green", descriptionKey: "car1_desc" },
+            { id: 2, elementId: "c2", fuelType: "LPG", baseConsumption: 7.5, baseConsumptionPetrol: 8.5, label: " l/100km", isElectric: false, isBiFuel: true, name: "Škoda Fabia III LPG", years: "2018-2020", priceRange: "30,000 - 45,000 zł", profit: "+4,000 - 4,500 zł netto", tag: "DOBRY BUDŻET / LPG", color: "blue", descriptionKey: "car2_desc" },
+            { id: 3, elementId: "c3", fuelType: "Electric", baseConsumption: 15, label: " kWh/100km", isElectric: true, isBiFuel: false, name: "Tesla Model 3", years: "2021+", priceRange: "120,000 - 160,000 zł", profit: "+5,800 zł netto", tag: "PREMIUM / EV", color: "purple", descriptionKey: "car3_desc" },
+            { id: 4, elementId: "c7", fuelType: "LPG", baseConsumption: 6.5, baseConsumptionPetrol: 6.0, label: " l/100km", isElectric: false, isBiFuel: true, name: "Toyota Prius II (Gen 2) LPG", years: "2004-2009", priceRange: "15,000 - 25,000 zł", profit: "+4,000 - 4,500 zł netto", tag: "KLASYK / LPG", color: "orange", descriptionKey: "car4_desc" },
+            { id: 5, elementId: "c8", fuelType: "LPG", baseConsumption: 6.0, baseConsumptionPetrol: 5.5, label: " l/100km", isElectric: false, isBiFuel: true, name: "Toyota Prius III (Gen 3) LPG", years: "2009-2015", priceRange: "30,000 - 45,000 zł", profit: "+4,500 - 5,000 zł netto", tag: "ZŁOTY ŚRODEK / LPG", color: "cyan", descriptionKey: "car5_desc" },
+            { id: 6, elementId: "c9", fuelType: "Diesel", baseConsumption: 6.5, label: " l/100km", isElectric: false, isBiFuel: false, name: "Skoda Octavia II (Diesel)", years: "2004-2013", priceRange: "10,000 - 20,000 zł", profit: "+2,800 - 3,500 zł netto", tag: "MEGA BUDŻET / DIESEL", color: "pink", descriptionKey: "car6_desc" }
+        ];
+        
+        // Dodatkowe tłumaczenia dla opisów aut i tagów
+        translations.pl.car1_desc = "Minimalne koszty eksploatacji dzięki LPG i hybrydzie. Świetna niezawodność.";
+        translations.pl.car2_desc = "Prosta, tania w zakupie i serwisie, z instalacją LPG jest bardzo oszczędna.";
+        translations.pl.car3_desc = "Najniższe koszty paliwa/energii. Wymaga dużej inwestycji początkowej.";
+        translations.pl.car4_desc = "Najtańsza hybryda z LPG na start. Wysoka niezawodność, minimalne koszty paliwa (przy 6.5L/100km LPG).";
+        translations.pl.car5_desc = "Idealny kompromis: niezawodność, LPG i niskie spalanie (przy 6.0L/100km LPG). Najczęściej spotykany w flocie.";
+        translations.pl.car6_desc = "Najtańsza opcja na start. Niskie koszty zakupu, ale wyższe koszty serwisu i większe spalanie ON.";
+        
+        translations.ru.car1_desc = "Минимальные эксплуатационные расходы благодаря LPG и гибриду. Отличная надежность.";
+        translations.ru.car2_desc = "Простой, дешевый в покупке и обслуживании, с установкой LPG очень экономичный.";
+        translations.ru.car3_desc = "Самые низкие расходы на топливо/энергию. Требует больших начальных инвестиций.";
+        translations.ru.car4_desc = "Самый дешевый гибрид с LPG для старта. Высокая надежность, минимальные расходы на топливо (при 6.5л/100км LPG).";
+        translations.ru.car5_desc = "Идеальный компромисс: надежность, LPG и низкий расход (при 6.0л/100км LPG). Чаще всего встречается в автопарке.";
+        translations.ru.car6_desc = "Самый дешевый вариант для старта. Низкие расходы на покупку, но более высокие расходы на обслуживание и больший расход ДТ.";
+        
+        translations.ua.car1_desc = "Мінімальні експлуатаційні витрати завдяки LPG та гібриду. Відмінна надійність.";
+        translations.ua.car2_desc = "Простий, дешевий у покупці та обслуговуванні, з установкою LPG дуже економний.";
+        translations.ua.car3_desc = "Найнижчі витрати на паливо/енергію. Вимагає значних початкових інвестицій.";
+        translations.ua.car4_desc = "Найдешевший гібрид з LPG для старту. Висока надійність, мінімальні витрати палива (при 6.5л/100км LPG).";
+        translations.ua.car5_desc = "Ідеальний компроміс: надійність, LPG і низька витрата (при 6.0л/100км LPG). Найчастіше зустрічається у флоті.";
+        translations.ua.car6_desc = "Найдешевший варіант для старту. Низькі витрати на покупку, але вищі витрати на сервіс та більша витрата ДП.";
+
+        // Tłumaczenia tagów (tylko jeden przykład)
+        translations.pl.car_tag_top_eco = "TOP EKONOMIA / LPG";
+        translations.ru.car_tag_top_eco = "ТОП ЭКОНОМИЯ / LPG";
+        translations.ua.car_tag_top_eco = "ТОП ЕКОНОМІЯ / LPG";
+        
+        translations.pl.car_tag_good_budget = "DOBRY BUDŻET / LPG";
+        translations.ru.car_tag_good_budget = "ХОРОШИЙ БЮДЖЕТ / LPG";
+        translations.ua.car_tag_good_budget = "ГАРНИЙ БЮДЖЕТ / LPG";
+
+        translations.pl.car_tag_premium = "PREMIUM / EV";
+        translations.ru.car_tag_premium = "ПРЕМИУМ / EV";
+        translations.ua.car_tag_premium = "ПРЕМІУМ / EV";
+
+        translations.pl.car_tag_classic = "KLASYK / LPG";
+        translations.ru.car_tag_classic = "КЛАССИКА / LPG";
+        translations.ua.car_tag_classic = "КЛАСИКА / LPG";
+
+        translations.pl.car_tag_gold_mean = "ZŁOTY ŚRODEK / LPG";
+        translations.ru.car_tag_gold_mean = "ЗОЛОТАЯ СЕРЕДИНА / LPG";
+        translations.ua.car_tag_gold_mean = "ЗОЛОТА СЕРЕДИНА / LPG";
+
+        translations.pl.car_tag_mega_budget = "MEGA BUDŻET / DIESEL";
+        translations.ru.car_tag_mega_budget = "МЕГА БЮДЖЕТ / DIESEL";
+        translations.ua.car_tag_mega_budget = "МЕГА БЮДЖЕТ / DIESEL";
+        
+        // Mapowanie tagów do kluczy (dla ułatwienia użycia w renderCarCards)
+        const tagMap = {
+            "TOP EKONOMIA / LPG": "car_tag_top_eco",
+            "DOBRY BUDŻET / LPG": "car_tag_good_budget",
+            "PREMIUM / EV": "car_tag_premium",
+            "KLASYK / LPG": "car_tag_classic",
+            "ZŁOTY ŚRODEK / LPG": "car_tag_gold_mean",
+            "MEGA BUDŻET / DIESEL": "car_tag_mega_budget"
+        };
+
+
+        // Dane dla bonusów (TERAZ JAKO PRZYKŁADY STRUKTUR)
+        const BONUSES = [
+            { city: "Warszawa", platform: "Uber", typeKey: "bonus_type_welcome", amount: "3,000 zł", conditionKey: "bonus_cond_150", color: "green" },
+            { city: "Warszawa", platform: "Bolt", typeKey: "bonus_type_weekly", amount: "+800 zł", conditionKey: "bonus_cond_75", color: "blue" },
+            { city: "Kraków", platform: "Uber", typeKey: "bonus_type_weekend", amount: "+450 zł", conditionKey: "bonus_cond_50", color: "orange" },
+            { city: "Kraków", platform: "Bolt", typeKey: "bonus_type_guarantee", amount: "32 zł/h", conditionKey: "bonus_cond_peak", color: "green" },
+            { city: "Wrocław", platform: "Uber", typeKey: "bonus_type_monthly", amount: "+1,500 zł", conditionKey: "bonus_cond_300", color: "purple" },
+            { city: "Wrocław", platform: "Bolt", typeKey: "bonus_type_start", amount: "+1,200 zł", conditionKey: "bonus_cond_100", color: "green" },
+            { city: "Poznań", platform: "Uber", typeKey: "bonus_type_multiplier", amount: "Minimalna mnożnik", conditionKey: "bonus_cond_center_22", color: "red" },
+            { city: "Gdańsk", platform: "Bolt", typeKey: "bonus_type_weekly", amount: "+550 zł", conditionKey: "bonus_cond_65", color: "blue" },
+            { city: "Warszawa", platform: "Uber", typeKey: "bonus_type_loyalty", amount: "+400 zł", conditionKey: "bonus_cond_40", color: "pink" },
+            { city: "Pozostałe", platform: "Bolt", typeKey: "bonus_type_basic", amount: "+250 zł", conditionKey: "bonus_cond_30", color: "yellow" },
+        ];
+        
+        // Tłumaczenia dla bonusów
+        translations.pl.bonus_type_welcome = "Bonus Powitalny";
+        translations.pl.bonus_cond_150 = "Po wykonaniu 150 kursów w 30 dni";
+        translations.pl.bonus_type_weekly = "Tygodniowy Quest";
+        translations.pl.bonus_cond_75 = "75 kursów Pon-Nd (Gwarantowana stawka)";
+        translations.pl.bonus_type_weekend = "Bonus weekendowy";
+        translations.pl.bonus_cond_50 = "50 kursów w Pt-Nd";
+        translations.pl.bonus_type_guarantee = "Gwarancja stawki";
+        translations.pl.bonus_cond_peak = "W godzinach szczytu (7-9 i 16-19)";
+        translations.pl.bonus_type_monthly = "Quest Miesięczny";
+        translations.pl.bonus_cond_300 = "300 kursów w miesiącu";
+        translations.pl.bonus_type_start = "Bonus startowy";
+        translations.pl.bonus_cond_100 = "Po wykonaniu 100 kursów w 21 dni";
+        translations.pl.bonus_type_multiplier = "Gwarancja x1.3";
+        translations.pl.bonus_cond_center_22 = "W strefie centrum po 22:00";
+        translations.pl.bonus_cond_65 = "65 kursów Pon-Nd";
+        translations.pl.bonus_type_loyalty = "Loyalty Bonus";
+        translations.pl.bonus_cond_40 = "Minimum 40 kursów przez 4 tygodnie";
+        translations.pl.bonus_type_basic = "Podstawowy Quest";
+        translations.pl.bonus_cond_30 = "30 kursów tygodniowo";
+
+        translations.ru.bonus_type_welcome = "Приветственный Бонус";
+        translations.ru.bonus_cond_150 = "После выполнения 150 поездок за 30 дней";
+        translations.ru.bonus_type_weekly = "Недельный Квест";
+        translations.ru.bonus_cond_75 = "75 поездок Пн-Вс (Гарантированная ставка)";
+        translations.ru.bonus_type_weekend = "Бонус выходного дня";
+        translations.ru.bonus_cond_50 = "50 поездок в Пт-Вс";
+        translations.ru.bonus_type_guarantee = "Гарантия ставки";
+        translations.ru.bonus_cond_peak = "В часы пик (7-9 и 16-19)";
+        translations.ru.bonus_type_monthly = "Месячный Квест";
+        translations.ru.bonus_cond_300 = "300 поездок в месяц";
+        translations.ru.bonus_type_start = "Стартовый Бонус";
+        translations.ru.bonus_cond_100 = "После выполнения 100 поездок за 21 день";
+        translations.ru.bonus_type_multiplier = "Гарантия x1.3";
+        translations.ru.bonus_cond_center_22 = "В зоне центра после 22:00";
+        translations.ru.bonus_cond_65 = "65 поездок Пн-Вс";
+        translations.ru.bonus_type_loyalty = "Бонус Лояльности";
+        translations.ru.bonus_cond_40 = "Минимум 40 поездок в течение 4 недель";
+        translations.ru.bonus_type_basic = "Базовый Квест";
+        translations.ru.bonus_cond_30 = "30 поездок еженедельно";
+
+        translations.ua.bonus_type_welcome = "Вітальний Бонус";
+        translations.ua.bonus_cond_150 = "Після виконання 150 поїздок за 30 днів";
+        translations.ua.bonus_type_weekly = "Тижневий Квест";
+        translations.ua.bonus_cond_75 = "75 поїздок Пн-Нд (Гарантована ставка)";
+        translations.ua.bonus_type_weekend = "Бонус вихідного дня";
+        translations.ua.bonus_cond_50 = "50 поїздок у Пт-Нд";
+        translations.ua.bonus_type_guarantee = "Гарантія ставки";
+        translations.ua.bonus_cond_peak = "У години пік (7-9 та 16-19)";
+        translations.ua.bonus_type_monthly = "Місячний Квест";
+        translations.ua.bonus_cond_300 = "300 поїздок на місяць";
+        translations.ua.bonus_type_start = "Стартовий Бонус";
+        translations.ua.bonus_cond_100 = "Після виконання 100 поїздок за 21 день";
+        translations.ua.bonus_type_multiplier = "Гарантія x1.3";
+        translations.ua.bonus_cond_center_22 = "У зоні центру після 22:00";
+        translations.ua.bonus_cond_65 = "65 поїздок Пн-Нд";
+        translations.ua.bonus_type_loyalty = "Бонус Лояльності";
+        translations.ua.bonus_cond_40 = "Мінімум 40 поїздок протягом 4 тижнів";
+        translations.ua.bonus_type_basic = "Базовий Квест";
+        translations.ua.bonus_cond_30 = "30 поїздок щотижня";
+
+
+        let currentLang = 'pl'; // Domyślny język
+
+        // --- FUNKCJA ZMIANY JĘZYKA ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('selectedLanguage', lang);
+            
+            // 1. Zmiana atrybutu lang w HTML
+            document.documentElement.lang = lang;
+            
+            // 2. Aktualizacja wszystkich elementów
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                const attr = element.getAttribute('data-lang-attr'); // Czy to jest placeholder, czy textContent
+
+                if (translations[lang] && translations[lang][key]) {
+                    let translatedText = translations[lang][key];
+
+                    if (attr === 'placeholder') {
+                        element.setAttribute('placeholder', translatedText);
+                    } else if (element.tagName === 'A' && key === 'contact_consent') {
+                         // Obsługa specjalnego przypadku dla akceptacji regulaminu (z linkiem)
+                         element.innerHTML = translatedText;
+                    } else {
+                        element.innerHTML = translatedText;
+                    }
+                }
+            });
+            
+            // 3. Aktualizacja selektora języka
+            document.getElementById('language-selector').value = lang;
+            
+            // 4. Ponowne renderowanie dynamicznych sekcji
+            renderCarCards(); 
+            updateCarCosts(); 
+            renderBonuses(document.querySelector('.city-filter-chip.bg-green-500').getAttribute('data-city'));
+            
+            // 5. Ponowna kalkulacja zarobków (jeśli język ma wpływ na formatowanie liczb - co jest bezpieczne)
+            calculateEarnings();
+        }
+
+        // --- FUNKCJE DLA KALKULATORA ZAROBKÓW ---
+
+        function calculateEarnings() {
+            // Używamy currentLang do formatowania liczb
+            const locale = currentLang === 'ru' || currentLang === 'ua' ? 'ru-RU' : 'pl-PL'; 
+            
+            const city = document.getElementById('city').value;
+            const hours = parseInt(document.getElementById('hours').value);
+            const days = parseInt(document.getElementById('days').value);
+            const fuelConsumption = parseFloat(document.getElementById('fuel').value);
+            
+            // POPRAWKA DLA PRZECINKA DZIESIĘTNEGO (TŁUMACZENIE PRZEGLĄDARKOWE)
+            const rawFuelPrice = document.getElementById('fuelPrice').value;
+            const fuelPrice = parseFloat(rawFuelPrice.replace(',', '.'));
+            
+            const commissionRate = parseFloat(document.getElementById('commissionRate').value) / 100;
+            
+            const hourlyRate = cityRates[city];
+            const avgKmPerHour = 22; 
+            
+            const dailyGross = hourlyRate * hours;
+            const weeklyGross = dailyGross * days;
+            const monthlyGross = weeklyGross * 4.2; 
+            
+            const commission = monthlyGross * commissionRate; 
+            
+            const dailyKm = hours * avgKmPerHour;
+            const monthlyKm = dailyKm * days * 4.2;
+            const monthlyFuelCost = (monthlyKm * fuelConsumption / 100) * fuelPrice;
+            
+            // Stałe i szacunkowe koszty
+            const fleetPartnerCost = 220; // 55 zł/tydzień * 4
+            const serviceCost = 300; // Szacunek na myjnię, płyny, lekkie serwisy
+            // Szacunek na podatek liniowy 8.5% od przychodu pomniejszonego o prowizję i paliwo (bardzo uproszczony Ryczałt)
+            const taxBase = Math.max(0, monthlyGross - commission - monthlyFuelCost);
+            const taxEstimate = taxBase * 0.085; 
+            
+            const totalFixedCosts = fleetPartnerCost + serviceCost + taxEstimate;
+
+            const monthlyNet = monthlyGross - commission - monthlyFuelCost - totalFixedCosts;
+            const totalHours = hours * days * 4.2;
+            const netHourlyRate = monthlyNet / totalHours;
+
+            // Tłumaczenie szczegółów kosztów stałych
+            const costDetailsKey = 'cost_fixed_details';
+            const costDetailsText = translations[currentLang][costDetailsKey] || translations.pl[costDetailsKey];
+            
+            document.getElementById('dailyGross').textContent = Math.round(dailyGross).toLocaleString(locale) + ' zł';
+            document.getElementById('weeklyGross').textContent = Math.round(weeklyGross).toLocaleString(locale) + ' zł';
+            document.getElementById('monthlyGross').textContent = Math.round(monthlyGross).toLocaleString(locale) + ' zł';
+            
+            document.getElementById('fuelCost').textContent = '-' + Math.round(monthlyFuelCost).toLocaleString(locale) + ' zł';
+            document.getElementById('commissionCost').textContent = '-' + Math.round(commission).toLocaleString(locale) + ' zł';
+            document.getElementById('commissionDisplay').textContent = (commissionRate * 100).toFixed(0) + '%';
+            
+            document.getElementById('otherCosts').innerHTML = `-${Math.round(totalFixedCosts).toLocaleString(locale)} zł <span class="text-xs text-gray-500">${costDetailsText}</span>`;
+            
+            document.getElementById('monthlyNet').textContent = Math.round(monthlyNet).toLocaleString(locale) + ' zł';
+            
+            const finalHourly = netHourlyRate > 0 ? netHourlyRate.toFixed(2) : "0.00";
+            const hourlyRateKey = 'calc_hourly_rate';
+            const hourlyRateText = translations[currentLang][hourlyRateKey] || translations.pl[hourlyRateKey];
+            
+            document.getElementById('hourlyRate').textContent = finalHourly;
+            document.querySelector('.text-sm.text-gray-400.mt-2').innerHTML = `~<span id="hourlyRate">${finalHourly}</span> zł/${hourlyRateText}`;
+        }
+
+        // --- FUNKCJE DLA PORÓWNANIE AUT ---
+
+        function renderCarCards(carList = carData) {
+            const locale = currentLang === 'ru' || currentLang === 'ua' ? 'ru-RU' : 'pl-PL'; 
+            const container = document.getElementById('car-comparison-container');
+            container.innerHTML = ''; 
+
+            carList.forEach(car => {
+                let tagKey = tagMap[car.tag];
+                let tagText = translations[currentLang][tagKey] || car.tag;
+                let descriptionText = translations[currentLang][car.descriptionKey] || car.description;
+                
+                let tagColorClass;
+                let profitColorClass;
+                
+                if (car.color === 'green') {
+                    tagColorClass = 'bg-green-500 text-black';
+                    profitColorClass = 'text-green-400';
+                } else if (car.color === 'blue') {
+                    tagColorClass = 'bg-blue-500 text-white';
+                    profitColorClass = 'text-blue-400';
+                } else if (car.color === 'purple') {
+                    tagColorClass = 'bg-purple-500 text-white';
+                    profitColorClass = 'text-purple-400';
+                } else if (car.color === 'orange') {
+                    tagColorClass = 'bg-orange-500 text-black';
+                    profitColorClass = 'text-orange-400';
+                } else if (car.color === 'cyan') {
+                    tagColorClass = 'bg-cyan-500 text-black';
+                    profitColorClass = 'text-cyan-400';
+                } else if (car.color === 'pink') {
+                    tagColorClass = 'bg-pink-500 text-white';
+                    profitColorClass = 'text-pink-400';
+                }
+
+                const consumptionIcon = car.fuelType === 'Electric' ? '<i class="fas fa-bolt mr-1"></i>' : 
+                                      car.fuelType === 'Diesel' ? '<i class="fas fa-oil-can mr-1"></i>' :
+                                      '<i class="fas fa-gas-pump mr-1"></i>';
+
+                let fuelCostSection;
+                
+                const carPriceText = translations[currentLang].car_price || translations.pl.car_price;
+                const carProfitText = translations[currentLang].car_profit || translations.pl.car_profit;
+                const carFuelCostText = translations[currentLang].car_cost_per_km || translations.pl.car_cost_per_km;
+                
+                if (car.isBiFuel) {
+                    const carLPGConsText = translations[currentLang].car_lpg_cons || translations.pl.car_lpg_cons;
+                    const carPb95ConsText = translations[currentLang].car_pb95_cons || translations.pl.car_pb95_cons;
+                    const carLPGCostText = translations[currentLang].car_lpg_cost || translations.pl.car_lpg_cost;
+                    const carPb95CostText = translations[currentLang].car_pb95_cost || translations.pl.car_pb95_cost;
+
+                    fuelCostSection = `
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">${consumptionIcon}${carLPGConsText}</span>
+                                <span class="font-semibold text-green-400" id="${car.elementId}-fuel-consumption-lpg">${car.baseConsumption.toFixed(1)}${car.label}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400"><i class="fas fa-gas-pump mr-1 text-gray-400"></i>${carPb95ConsText}</span>
+                                <span class="font-semibold text-yellow-400" id="${car.elementId}-fuel-consumption-pb95">${car.baseConsumptionPetrol.toFixed(1)}${car.label}</span>
+                            </div>
+                            <div class="flex justify-between border-t border-white/10 pt-3">
+                                <span class="text-gray-400">${carPriceText}</span>
+                                <span class="font-semibold">${car.priceRange}</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t border-white/10 pt-3">
+                                <span class="text-gray-200">${carLPGCostText}</span>
+                                <span class="text-green-400" id="${car.elementId}-fuel-cost-lpg">~ ${translations[currentLang].loading || 'loading...'}</span>
+                            </div>
+                            <div class="flex justify-between font-bold">
+                                <span class="text-gray-200">${carPb95CostText}</span>
+                                <span class="text-red-400" id="${car.elementId}-fuel-cost-pb95">~ ${translations[currentLang].loading || 'loading...'}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const carFuelConsText = translations[currentLang].car_fuel_consumption || translations.pl.car_fuel_consumption;
+                    fuelCostSection = `
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">${consumptionIcon}${carFuelConsText} (${car.fuelType})</span>
+                                <span class="font-semibold ${car.fuelType === 'Electric' ? 'text-green-400' : 'text-yellow-400'}" id="${car.elementId}-fuel-consumption">${car.baseConsumption.toFixed(1)}${car.label}</span>
+                            </div>
+                            <div class="flex justify-between border-t border-white/10 pt-3">
+                                <span class="text-gray-400">${carPriceText}</span>
+                                <span class="font-semibold">${car.priceRange}</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t border-white/10 pt-3">
+                                <span class="text-gray-200">${carFuelCostText}</span>
+                                <span class="text-red-400" id="${car.elementId}-fuel-cost">~ ${translations[currentLang].loading || 'loading...'}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const carHTML = `
+                    <div class="card-gradient p-6 rounded-3xl border border-white/10 hover:border-${car.color}-400/50 transition group flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold">${car.name}</h3>
+                                <p class="text-gray-400">${car.years}</p>
+                            </div>
+                            <span class="${tagColorClass} px-3 py-1 rounded-full text-sm font-bold">${tagText}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">${descriptionText}</p>
+                        
+                        <div class="flex-grow"> 
+                            ${fuelCostSection}
+                        </div>
+                        <div class="bg-${car.color}-500/20 p-4 rounded-xl mt-auto">
+                            <div class="text-sm text-gray-400">${carProfitText}</div>
+                            <div class="text-2xl font-bold ${profitColorClass}">${car.profit}</div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += carHTML;
+            });
+        }
+        
+        function updateCarCosts() {
+            const locale = currentLang === 'ru' || currentLang === 'ua' ? 'ru-RU' : 'pl-PL';
+            const monthlyKm = parseInt(document.getElementById('monthlyKmSlider').value);
+            const drivingMode = document.getElementById('drivingMode').value;
+            
+            document.getElementById('monthlyKmValue').textContent = monthlyKm.toLocaleString(locale);
+            document.querySelectorAll('.km-display').forEach(el => {
+                el.textContent = monthlyKm.toLocaleString(locale);
+            });
+
+            // Ważne: renderCarCards musi być wywołane, aby elementy istniały
+            // Możemy pominąć renderowanie, jeśli już wywołano, ale dla bezpieczeństwa translacji zostawiamy.
+            // Zostawiamy w DOMContentLoaded, a tutaj tylko aktualizujemy, co jest bezpieczniejsze.
+
+            carData.forEach(car => {
+                let consumption = car.baseConsumption;
+                let consumptionPetrol = car.isBiFuel ? car.baseConsumptionPetrol : 0; 
+                
+                if (drivingMode === 'eco') {
+                    consumption *= 0.9;
+                    consumptionPetrol *= 0.9;
+                } else if (drivingMode === 'fast') {
+                    consumption *= 1.1;
+                    consumptionPetrol *= 1.1;
+                }
+                
+                if (car.isBiFuel) {
+                    
+                    const monthlyLpgCost = (monthlyKm * consumption / 100) * FUEL_PRICES.LPG;
+                    const monthlyPb95Cost = (monthlyKm * consumptionPetrol / 100) * FUEL_PRICES.Pb95;
+                    
+                    const costLpgEl = document.getElementById(`${car.elementId}-fuel-cost-lpg`);
+                    const consumptionLpgEl = document.getElementById(`${car.elementId}-fuel-consumption-lpg`);
+                    const costPb95El = document.getElementById(`${car.elementId}-fuel-cost-pb95`);
+                    const consumptionPb95El = document.getElementById(`${car.elementId}-fuel-consumption-pb95`);
+
+                    if (consumptionLpgEl) consumptionLpgEl.textContent = consumption.toFixed(1) + car.label;
+                    if (costLpgEl) costLpgEl.textContent = '~' + Math.round(monthlyLpgCost).toLocaleString(locale) + ' zł';
+
+                    if (consumptionPb95El) consumptionPb95El.textContent = consumptionPetrol.toFixed(1) + car.label;
+                    if (costPb95El) costPb95El.textContent = '~' + Math.round(monthlyPb95Cost).toLocaleString(locale) + ' zł';
+                
+                } else {
+                    
+                    let price;
+                    let costColor;
+
+                    if (car.fuelType === 'Electric') {
+                        price = FUEL_PRICES.Electric;
+                        costColor = 'text-green-400';
+                    } else if (car.fuelType === 'Diesel') {
+                        price = FUEL_PRICES.Diesel;
+                        costColor = 'text-red-400'; 
+                    } else { 
+                        price = FUEL_PRICES.Pb95;
+                        costColor = 'text-red-400'; 
+                    }
+                    
+                    const monthlyFuelCost = (monthlyKm * consumption / 100) * price;
+                    
+                    const costEl = document.getElementById(`${car.elementId}-fuel-cost`);
+                    const consumptionEl = document.getElementById(`${car.elementId}-fuel-consumption`);
+                    
+                    if (consumptionEl) consumptionEl.textContent = consumption.toFixed(1) + car.label;
+                    
+                    if (costEl) {
+                        costEl.textContent = '~' + Math.round(monthlyFuelCost).toLocaleString(locale) + ' zł';
+                        costEl.classList.remove('text-red-400', 'text-green-400');
+                        costEl.classList.add(costColor);
+                    }
+                }
+            });
+        }
+        
+        // --- FUNKCJE DLA BONUSÓW ---
+
+        function renderBonuses(filterCity = "Wszystkie") {
+            const container = document.getElementById('bonus-list-container');
+            container.innerHTML = '';
+            
+            const filteredBonuses = BONUSES.filter(bonus => {
+                if (filterCity === "Wszystkie") return true;
+                return bonus.city === filterCity || bonus.city === "Pozostałe";
+            });
+
+            if (filteredBonuses.length === 0) {
+                const noBonusText = currentLang === 'pl' ? `Brak przykładowych bonusów dla ${filterCity}. Sprawdź opcję "Wszystkie".` :
+                                   currentLang === 'ru' ? `Нет примеров бонусов для ${filterCity}. Проверьте опцию "Все".` :
+                                   `Немає прикладів бонусів для ${filterCity}. Перевірте опцію "Всі".`;
+                container.innerHTML = `<div class="md:col-span-3 text-center py-10 text-gray-400">${noBonusText}</div>`;
+                return;
+            }
+
+            filteredBonuses.forEach(bonus => {
+                let platformColor = bonus.platform === 'Uber' ? 'bg-black text-white' : 'bg-green-500 text-black';
+                let accentColor = bonus.color === 'green' ? 'border-green-500' : 
+                                  bonus.color === 'blue' ? 'border-blue-500' :
+                                  bonus.color === 'orange' ? 'border-orange-500' :
+                                  bonus.color === 'red' ? 'border-red-500' :
+                                  bonus.color === 'purple' ? 'border-purple-500' :
+                                  'border-yellow-500';
+
+                // Tłumaczenie typu i warunku
+                const typeText = translations[currentLang][bonus.typeKey] || bonus.typeKey;
+                const conditionText = translations[currentLang][bonus.conditionKey] || bonus.conditionKey;
+
+                const bonusHTML = `
+                    <div class="card-gradient p-6 rounded-3xl border border-white/10">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 ${platformColor} rounded-xl flex items-center justify-center font-bold text-lg">${bonus.platform}</div>
+                            <div>
+                                <h4 class="text-lg font-bold">${typeText}</h4>
+                                <p class="text-sm text-gray-400">${bonus.city}</p>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-${bonus.color}-500/20 to-transparent p-4 rounded-xl border-l-4 ${accentColor}">
+                            <div class="text-xl font-bold text-${bonus.color}-400 mb-1">${bonus.amount}</div>
+                            <div class="text-xs text-gray-400">${conditionText}</div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += bonusHTML;
+            });
+        }
+
+        function setupBonusFilters() {
+            const chips = document.querySelectorAll('.city-filter-chip');
+            chips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const selectedCity = this.getAttribute('data-city');
+                    
+                    // Reset styli dla wszystkich
+                    chips.forEach(c => {
+                        c.classList.remove('bg-green-500', 'text-black');
+                        c.classList.add('bg-white/5', 'text-gray-300');
+                    });
+
+                    // Ustaw styl dla wybranego
+                    this.classList.add('bg-green-500', 'text-black');
+                    this.classList.remove('bg-white/5', 'text-gray-300');
+
+                    renderBonuses(selectedCity);
+                });
+            });
+        }
+        
+        // --- FUNKCJE DLA COOKIE BANNER ---
+        function setupCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            const acceptButton = document.getElementById('accept-cookies');
+            const cookieName = 'cookies_accepted';
+
+            // 1. Check if accepted
+            if (localStorage.getItem(cookieName) === 'true') {
+                banner.style.display = 'none';
+                return;
+            }
+
+            // 2. Show banner after delay
+            setTimeout(() => {
+                banner.classList.remove('translate-y-full', 'opacity-0');
+                // Aby umożliwić płynną animację
+                banner.classList.add('translate-y-0', 'opacity-100');
+            }, 500);
+
+            // 3. Handle acceptance
+            acceptButton.addEventListener('click', () => {
+                localStorage.setItem(cookieName, 'true');
+                // Animacja ukrywania
+                banner.classList.remove('translate-y-0', 'opacity-100');
+                banner.classList.add('translate-y-full', 'opacity-0');
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 500);
+            });
+        }
+
+
+        // --- POZOSTAŁE FUNKCJE ---
+
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- LISTENERS I INICJALIZACJA ---
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Ustawienie początkowego języka
+            const savedLang = localStorage.getItem('selectedLanguage') || 'pl';
+            setLanguage(savedLang); // Wymusza pierwszą translację
+
+            // Ustawienie domyślnej wartości dla kalkulatora
+            document.getElementById('fuelPrice').value = FUEL_PRICES.LPG.toFixed(2);
+
+            // Słuchacze dla Kalkulatora
+            document.getElementById('hours').addEventListener('input', function() {
+                document.getElementById('hoursValue').textContent = this.value;
+                calculateEarnings();
+            });
+            document.getElementById('days').addEventListener('input', function() {
+                document.getElementById('daysValue').textContent = this.value;
+                calculateEarnings();
+            });
+            document.getElementById('fuel').addEventListener('input', function() {
+                document.getElementById('fuelValue').textContent = this.value;
+                calculateEarnings();
+            });
+            document.getElementById('commissionRate').addEventListener('input', function() {
+                document.getElementById('commissionValue').textContent = this.value;
+                calculateEarnings();
+            });
+            document.getElementById('city').addEventListener('change', calculateEarnings);
+            document.getElementById('fuelPrice').addEventListener('input', calculateEarnings);
+
+            // Słuchacz dla Porównania Aut (oninput jest już w HTML)
+            document.getElementById('monthlyKmSlider').addEventListener('input', updateCarCosts);
+            document.getElementById('drivingMode').addEventListener('change', updateCarCosts);
+
+            
+            // Inicjalizacja kalkulacji i kart
+            calculateEarnings();
+            renderCarCards(); 
+            updateCarCosts();
+            
+            // Inicjalizacja bonusów i filtrów
+            setupBonusFilters();
+            renderBonuses();
+
+            // Inicjalizacja banera cookies
+            setupCookieBanner();
+
+            // POPRAWKA JS: zamykanie menu mobilnego po kliknięciu linku
+            document.querySelectorAll('#mobileMenu a').forEach(item => {
+                item.addEventListener('click', toggleMobileMenu);
+            });
+        });
+
+    </script>
+</body>
+</html>
